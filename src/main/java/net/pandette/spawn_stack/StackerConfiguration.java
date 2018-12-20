@@ -22,7 +22,7 @@
 package net.pandette.spawn_stack;
 
 import org.bukkit.Material;
-import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -34,10 +34,10 @@ import static org.bukkit.Material.GHAST_TEAR;
 
 public class StackerConfiguration {
 
-    private final YamlConfiguration configuration;
+    private final FileConfiguration configuration;
 
     @Inject
-    public StackerConfiguration(YamlConfiguration configuration) {
+    public StackerConfiguration(FileConfiguration configuration) {
         this.configuration = configuration;
     }
 

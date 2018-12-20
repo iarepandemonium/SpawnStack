@@ -22,21 +22,46 @@
 package net.pandette.spawn_stack.di;
 
 import dagger.Module;
+import dagger.Provides;
+import net.pandette.spawn_stack.StackLocation;
 import net.pandette.spawn_stack.StackerConfiguration;
+import net.pandette.spawn_stack.mysql.MySQL;
+import net.pandette.spawn_stack.mysql.StackSql;
+import net.pandette.spawn_stack.yaml.CustomYamlFile;
+import net.pandette.spawn_stack.yaml.StackYaml;
 import org.bukkit.configuration.file.YamlConfiguration;
+
+import javax.inject.Singleton;
+import java.io.InputStream;
 
 @Module
 public class SingleModule {
 
 
-    private YamlConfiguration configuration;
+    private final YamlConfiguration configuration;
+    private final InputStream stream;
+    private final String path;
 
-    public SingleModule(YamlConfiguration configuration){
+    public SingleModule(YamlConfiguration configuration, InputStream stream, String path) {
         this.configuration = configuration;
+        this.stream = stream;
+        this.path = path;
     }
 
-    StackerConfiguration providesStackerConfiguration(){
+    @Singleton
+    @Provides
+    StackerConfiguration providesStackerConfiguration() {
         return new StackerConfiguration(configuration);
+    }
+
+    @Singleton
+    @Provides
+    StackLocation providesStackLocation(StackerConfiguration stacker) {
+        if (configuration.getBoolean("database.enabled", false)) {
+            return new StackSql(new MySQL(stacker));
+        } else {
+            return new StackYaml(new CustomYamlFile(stream, path));
+        }
     }
 
 }

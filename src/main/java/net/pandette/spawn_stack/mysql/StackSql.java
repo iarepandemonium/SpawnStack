@@ -79,7 +79,7 @@ public class StackSql implements StackLocation {
              PreparedStatement ps = connection.prepareStatement(
                      "DELETE FROM spawnstack WHERE world = ? AND x = ? AND y = ? AND z = ?")) {
             setSqlLocation(ps, location);
-            ps.execute()
+            ps.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         }

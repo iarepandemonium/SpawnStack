@@ -30,7 +30,10 @@ public class SpawnStack extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        InputStream test = this.getResource("test");
+        StackerConfiguration configuration = new StackerConfiguration(getConfig());
+        String file = "spawners.yml";
+        InputStream spawners = this.getResource(file);
+        String path = this.getDataFolder() + "/" + file;
 
 
     }
