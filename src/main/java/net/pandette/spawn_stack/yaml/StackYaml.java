@@ -26,16 +26,18 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 
+import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 public class StackYaml implements StackLocation {
 
-    private static final Map<Location, Integer> LOCATIONS = new HashMap<>();
+    private final Map<Location, Integer> LOCATIONS = new HashMap<>();
 
     private final CustomYamlFile custom;
 
+    @Inject
     public StackYaml(CustomYamlFile custom) {
         this.custom = custom;
 
@@ -70,6 +72,11 @@ public class StackYaml implements StackLocation {
         LOCATIONS.remove(location);
         custom.get().set("locations." + gather(location), null);
         custom.save();
+    }
+
+    @Override
+    public boolean isSpawner(Location location) {
+        return LOCATIONS.containsKey(location);
     }
 
     private Location split(String location) {

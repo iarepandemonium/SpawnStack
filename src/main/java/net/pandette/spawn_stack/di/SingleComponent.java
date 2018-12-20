@@ -22,11 +22,14 @@
 package net.pandette.spawn_stack.di;
 
 import dagger.Component;
+import net.pandette.spawn_stack.listeners.CreatureListener;
 
 import javax.inject.Singleton;
 
 @Singleton
 @Component(modules = SingleModule.class)
 public interface SingleComponent {
+
+    CreatureListener listener();
 
 }

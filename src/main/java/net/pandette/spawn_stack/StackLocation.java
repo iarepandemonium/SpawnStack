@@ -31,4 +31,6 @@ public interface StackLocation {
 
     void deleteLocation(Location location);
 
+    boolean isSpawner(Location location);
+
 }

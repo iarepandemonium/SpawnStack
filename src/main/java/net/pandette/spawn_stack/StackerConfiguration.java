@@ -65,6 +65,10 @@ public class StackerConfiguration {
         return stack;
     }
 
+    public double getSoulDropChance(){
+        return configuration.getDouble("soulitem.dropchance", 1.3);
+    }
+
     public String getDatabaseUsername(){
         return configuration.getString("database.user", "minecraft");
     }

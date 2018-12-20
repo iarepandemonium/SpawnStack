@@ -24,6 +24,7 @@ package net.pandette.spawn_stack.mysql;
 import net.pandette.spawn_stack.StackLocation;
 import org.bukkit.Location;
 
+import javax.inject.Inject;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -33,6 +34,7 @@ public class StackSql implements StackLocation {
 
     private final MySQL mySQL;
 
+    @Inject
     public StackSql(MySQL mySQL) {
         this.mySQL = mySQL;
     }
@@ -66,8 +68,7 @@ public class StackSql implements StackLocation {
             ps.setInt(6, size);
             ps.execute();
 
-        } catch (
-                SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
@@ -83,6 +84,23 @@ public class StackSql implements StackLocation {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public boolean isSpawner(Location location) {
+        try (Connection connection = mySQL.open();
+             PreparedStatement ps = connection.prepareStatement("SELECT * FROM spawnstack WHERE" +
+                     " world = ? AND x = ? AND y = ? AND z = ?")) {
+            setSqlLocation(ps, location);
+
+            ResultSet rs = ps.executeQuery();
+
+            return rs.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 
 

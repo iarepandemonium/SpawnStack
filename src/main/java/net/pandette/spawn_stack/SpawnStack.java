@@ -21,7 +21,10 @@
 
 package net.pandette.spawn_stack;
 
-
+import net.pandette.spawn_stack.di.DaggerSingleComponent;
+import net.pandette.spawn_stack.di.SingleComponent;
+import net.pandette.spawn_stack.di.SingleModule;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.InputStream;
@@ -30,16 +33,18 @@ public class SpawnStack extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        StackerConfiguration configuration = new StackerConfiguration(getConfig());
         String file = "spawners.yml";
         InputStream spawners = this.getResource(file);
         String path = this.getDataFolder() + "/" + file;
 
+        SingleComponent component = DaggerSingleComponent.builder().singleModule(new SingleModule(getConfig(), spawners, path)).build();
 
+        Bukkit.getPluginManager().registerEvents(component.listener(), this);
     }
 
     @Override
     public void onDisable() {
+
     }
 
 }
