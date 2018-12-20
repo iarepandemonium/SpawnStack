@@ -33,7 +33,7 @@ import java.util.Set;
 
 public class StackYaml implements StackLocation {
 
-    private final Map<Location, Integer> LOCATIONS = new HashMap<>();
+    private final Map<Location, Integer> locations = new HashMap<>();
 
     private final CustomYamlFile custom;
 
@@ -51,32 +51,32 @@ public class StackYaml implements StackLocation {
         for (String k : keys) {
             Location location = split(k);
             Integer i = configuration.getInt(k, 0);
-            LOCATIONS.put(location, i);
+            locations.put(location, i);
         }
     }
 
     @Override
     public int getSize(Location location) {
-        return LOCATIONS.get(location);
+        return locations.get(location);
     }
 
     @Override
     public void updateLocation(Location location, int size) {
-        LOCATIONS.put(location, size);
+        locations.put(location, size);
         custom.get().set("locations." + gather(location), size);
         custom.save();
     }
 
     @Override
     public void deleteLocation(Location location) {
-        LOCATIONS.remove(location);
+        locations.remove(location);
         custom.get().set("locations." + gather(location), null);
         custom.save();
     }
 
     @Override
     public boolean isSpawner(Location location) {
-        return LOCATIONS.containsKey(location);
+        return locations.containsKey(location);
     }
 
     private Location split(String location) {

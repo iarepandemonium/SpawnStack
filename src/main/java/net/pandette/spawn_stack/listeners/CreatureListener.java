@@ -35,7 +35,7 @@ import java.util.UUID;
 
 public class CreatureListener implements Listener {
 
-    private final List<UUID> SPAWNED_CREATURES = new ArrayList<>();
+    private final List<UUID> spawnedCreatures = new ArrayList<>();
 
     private final StackLocation stackLocation;
     private final StackerConfiguration configuration;
@@ -50,14 +50,14 @@ public class CreatureListener implements Listener {
     public void onSpawn(SpawnerSpawnEvent event) {
         if(!stackLocation.isSpawner(event.getSpawner().getLocation())) return;
 
-        SPAWNED_CREATURES.add(event.getEntity().getUniqueId());
+        spawnedCreatures.add(event.getEntity().getUniqueId());
     }
 
     @EventHandler
     public void onDeath(EntityDeathEvent event) {
-        if(!SPAWNED_CREATURES.contains(event.getEntity().getUniqueId())) return;
+        if(!spawnedCreatures.contains(event.getEntity().getUniqueId())) return;
 
-        SPAWNED_CREATURES.remove(event.getEntity().getUniqueId());
+        spawnedCreatures.remove(event.getEntity().getUniqueId());
         if(Math.random() > configuration.getSoulDropChance()) return;
 
         event.getDrops().add(configuration.getSoulItem());
