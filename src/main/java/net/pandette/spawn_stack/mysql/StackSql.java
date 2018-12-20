@@ -24,19 +24,72 @@ package net.pandette.spawn_stack.mysql;
 import net.pandette.spawn_stack.StackLocation;
 import org.bukkit.Location;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 public class StackSql implements StackLocation {
+
+    private final MySQL mySQL;
+
+    public StackSql(MySQL mySQL) {
+        this.mySQL = mySQL;
+    }
+
     @Override
     public int getSize(Location location) {
-        return 0;
+        try (Connection connection = mySQL.open();
+             PreparedStatement ps = connection.prepareStatement("SELECT size FROM spawnstack WHERE" +
+                     " world = ? AND x = ? AND y = ? AND z = ?")) {
+            setSqlLocation(ps, location);
+
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt("size");
+            } else return -1;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
     }
 
     @Override
     public void updateLocation(Location location, int size) {
+        try (Connection connection = mySQL.open();
+             PreparedStatement ps = connection.prepareStatement(
+                     "INSERT INTO spawnstack (world, x, y, z, size) VALUES (?,?,?,?,?) " +
+                             "ON DUPLICATE KEY UPDATE size = ?")) {
+            setSqlLocation(ps, location);
+            ps.setInt(5, size);
+            ps.setInt(6, size);
+            ps.execute();
+
+        } catch (
+                SQLException e) {
+            e.printStackTrace();
+        }
 
     }
 
     @Override
     public void deleteLocation(Location location) {
+        try (Connection connection = mySQL.open();
+             PreparedStatement ps = connection.prepareStatement(
+                     "DELETE FROM spawnstack WHERE world = ? AND x = ? AND y = ? AND z = ?")) {
+            setSqlLocation(ps, location);
+            ps.execute()
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
+
+    private void setSqlLocation(PreparedStatement ps, Location location) throws SQLException {
+        ps.setString(1, location.getWorld().getName());
+        ps.setInt(2, location.getBlockX());
+        ps.setInt(3, location.getBlockY());
+        ps.setInt(4, location.getBlockZ());
     }
 }
