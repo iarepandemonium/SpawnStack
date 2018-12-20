@@ -21,5 +21,22 @@
 
 package net.pandette.spawn_stack.mysql;
 
-public class StackSql {
+import net.pandette.spawn_stack.StackLocation;
+import org.bukkit.Location;
+
+public class StackSql implements StackLocation {
+    @Override
+    public int getSize(Location location) {
+        return 0;
+    }
+
+    @Override
+    public void updateLocation(Location location, int size) {
+
+    }
+
+    @Override
+    public void deleteLocation(Location location) {
+
+    }
 }

@@ -22,6 +22,7 @@
 package net.pandette.spawn_stack.yaml;
 
 import net.pandette.spawn_stack.StackLocation;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -40,29 +41,54 @@ public class StackYaml implements StackLocation {
 
         FileConfiguration configuration = custom.get();
 
-        if(configuration.getConfigurationSection("locations") == null) {
+        if (configuration.getConfigurationSection("locations") == null) {
             configuration.createSection("locations");
         }
 
         Set<String> keys = configuration.getConfigurationSection("locations").getKeys(false);
-        for(String k : keys) {
-
+        for (String k : keys) {
+            Location location = split(k);
+            Integer i = configuration.getInt(k, 0);
+            LOCATIONS.put(location, i);
         }
-
     }
 
     @Override
     public int getSize(Location location) {
-        return 0;
+        return LOCATIONS.get(location);
     }
 
     @Override
     public void updateLocation(Location location, int size) {
-
+        LOCATIONS.put(location, size);
+        custom.get().set("locations." + gather(location), size);
+        custom.save();
     }
 
     @Override
     public void deleteLocation(Location location) {
+        LOCATIONS.remove(location);
+        custom.get().set("locations." + gather(location), null);
+        custom.save();
+    }
 
+    private Location split(String location) {
+        String[] locationString = location.split(":::");
+        if (locationString.length < 4) return null;
+
+        try {
+            return new Location(
+                    Bukkit.getWorld(locationString[0]),
+                    Integer.parseInt(locationString[1]),
+                    Integer.parseInt(locationString[2]),
+                    Integer.parseInt(locationString[3]));
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private String gather(Location location) {
+        return location.getWorld().getName() + ":::" + location.getBlockX() +
+                ":::" + location.getBlockY() + ":::" + location.getBlockZ();
     }
 }
