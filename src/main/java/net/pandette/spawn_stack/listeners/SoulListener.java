@@ -2,6 +2,7 @@ package net.pandette.spawn_stack.listeners;
 
 import net.pandette.spawn_stack.StackLocation;
 import net.pandette.spawn_stack.StackerConfiguration;
+import net.pandette.spawn_stack.util.VersionUtil;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.CreatureSpawner;
@@ -14,7 +15,9 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
+@Singleton
 public class SoulListener implements Listener {
 
     private final StackLocation stackLocation;
@@ -37,7 +40,7 @@ public class SoulListener implements Listener {
 
         CreatureSpawner creatureSpawner = (CreatureSpawner) block.getState();
 
-        EntityType type = creatureSpawner.getCreatureType().toEntityType();
+        EntityType type = VersionUtil.convertCreatureType(creatureSpawner.getCreatureTypeName());
         Integer cost = configuration.getSoulsPerCreature(type.name());
         if (cost == null) return;
 

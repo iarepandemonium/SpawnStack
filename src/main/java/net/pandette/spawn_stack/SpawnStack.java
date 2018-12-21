@@ -37,6 +37,10 @@ public class SpawnStack extends JavaPlugin {
         InputStream spawners = this.getResource(file);
         String path = this.getDataFolder() + "/" + file;
 
+        if(!getDataFolder().exists()) {
+            saveDefaultConfig();
+        }
+
         SingleComponent component = DaggerSingleComponent.builder().singleModule(new SingleModule(getConfig(), spawners, path)).build();
 
         Bukkit.getPluginManager().registerEvents(component.creatureListener(), this);

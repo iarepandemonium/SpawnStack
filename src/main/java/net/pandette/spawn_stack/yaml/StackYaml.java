@@ -65,6 +65,7 @@ public class StackYaml implements StackLocation {
     @Override
     public void updateLocation(Location location, int size) {
         locations.put(location, size);
+        Bukkit.broadcastMessage("Putting!");
         custom.get().set("locations." + gather(location), size);
         custom.save();
     }
@@ -84,12 +85,24 @@ public class StackYaml implements StackLocation {
     @Override
     public List<Location> getBetweenXandZ(String world, int x, int z) {
         List<Location> locations = new ArrayList<>();
+
+        int X = x * 16;
+        int Z = z * 16;
         for(Location location : this.locations.keySet()) {
-            if(location.getWorld().getName().equals(world) && location.getBlockX() == x && location.getBlockZ() == z) {
+            if(isApplicableBlock(location, world, X, Z)) {
                 locations.add(location);
             }
         }
         return locations;
+    }
+
+    private boolean isApplicableBlock(Location location, String world, int X, int Z){
+        return location.getWorld().getName().equals(world)
+                && inbetween(location.getBlockX(), X, X+16) && inbetween(location.getBlockZ(), Z, Z+16);
+    }
+
+    private boolean inbetween(int num, int min, int max){
+        return num > min && num < max;
     }
 
     private Location split(String location) {

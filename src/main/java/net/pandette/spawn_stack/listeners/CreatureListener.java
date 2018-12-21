@@ -29,10 +29,12 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.SpawnerSpawnEvent;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Singleton
 public class CreatureListener implements Listener {
 
     private final List<UUID> spawnedCreatures = new ArrayList<>();

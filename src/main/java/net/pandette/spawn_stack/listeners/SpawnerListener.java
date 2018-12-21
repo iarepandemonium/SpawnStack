@@ -1,6 +1,8 @@
 package net.pandette.spawn_stack.listeners;
 
 import net.pandette.spawn_stack.StackLocation;
+import net.pandette.spawn_stack.util.VersionUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -13,8 +15,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.List;
 
+@Singleton
 public class SpawnerListener implements Listener {
 
     private final StackLocation stackLocation;
@@ -27,11 +31,11 @@ public class SpawnerListener implements Listener {
     @EventHandler
     public void onPlaceStack(BlockPlaceEvent event) {
         if (event.getBlockPlaced().getType() != Material.MOB_SPAWNER) return;
-
         Chunk chunk = event.getBlock().getChunk();
 
         List<Location> locationList = stackLocation
                 .getBetweenXandZ(chunk.getWorld().getName(), chunk.getX(), chunk.getZ());
+        Bukkit.broadcastMessage(locationList.size() + "");
 
         if (!locationList.isEmpty()) {
             for (Location location : locationList) {
@@ -76,7 +80,7 @@ public class SpawnerListener implements Listener {
             BlockStateMeta bsm = (BlockStateMeta) spawner.getItemMeta();
             CreatureSpawner creatureSpawner = (CreatureSpawner) bsm.getBlockState();
 
-            creatureSpawner.setSpawnedType(creatureSpawnerBlock.getCreatureType().toEntityType());
+            creatureSpawner.setSpawnedType(VersionUtil.convertCreatureType(creatureSpawnerBlock.getCreatureTypeName()));
             bsm.setBlockState(creatureSpawner);
             spawner.setItemMeta(bsm);
             location.getWorld().dropItemNaturally(location, spawner);

@@ -39,7 +39,8 @@ database:
   useSSL: false
 
 messages:
-  not_enough_souls: You do not have enough souls for this spawner!
+  not_enough_souls: '&4You do not have enough souls for this spawner!'
+  paid_souls: '&aYou have upgraded this spawner to level {level}!'
 
 soulcost:
   BAT: 1
