@@ -40,7 +40,9 @@ public class CustomYamlFile {
         get();
     }
 
-
+    /**
+     * Save the configuration
+     */
     public void save() {
         if (config == null || configurationFile == null) {
             return;
@@ -52,6 +54,11 @@ public class CustomYamlFile {
         }
     }
 
+    /**
+     * Get the configuration
+     *
+     * @return Configuration
+     */
     public FileConfiguration get() {
         if(config != null) return config;
 
