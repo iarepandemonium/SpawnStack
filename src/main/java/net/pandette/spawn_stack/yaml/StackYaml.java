@@ -27,7 +27,9 @@ import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -77,6 +79,17 @@ public class StackYaml implements StackLocation {
     @Override
     public boolean isSpawner(Location location) {
         return locations.containsKey(location);
+    }
+
+    @Override
+    public List<Location> getBetweenXandZ(String world, int x, int z) {
+        List<Location> locations = new ArrayList<>();
+        for(Location location : this.locations.keySet()) {
+            if(location.getWorld().getName().equals(world) && location.getBlockX() == x && location.getBlockZ() == z) {
+                locations.add(location);
+            }
+        }
+        return locations;
     }
 
     private Location split(String location) {

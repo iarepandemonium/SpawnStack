@@ -23,6 +23,8 @@ package net.pandette.spawn_stack;
 
 import org.bukkit.Location;
 
+import java.util.List;
+
 public interface StackLocation {
 
     int getSize(Location location);
@@ -32,5 +34,7 @@ public interface StackLocation {
     void deleteLocation(Location location);
 
     boolean isSpawner(Location location);
+
+    List<Location> getBetweenXandZ(String world, int x, int z);
 
 }

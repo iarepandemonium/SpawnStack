@@ -25,7 +25,6 @@ import dagger.Module;
 import dagger.Provides;
 import net.pandette.spawn_stack.StackLocation;
 import net.pandette.spawn_stack.StackerConfiguration;
-import net.pandette.spawn_stack.listeners.CreatureListener;
 import net.pandette.spawn_stack.mysql.MySQL;
 import net.pandette.spawn_stack.mysql.StackSql;
 import net.pandette.spawn_stack.yaml.CustomYamlFile;
@@ -63,12 +62,6 @@ public class SingleModule {
         } else {
             return new StackYaml(new CustomYamlFile(stream, path));
         }
-    }
-
-    @Singleton
-    @Provides
-    CreatureListener providesCreatureListener(StackLocation stackLocation, StackerConfiguration stackerConfiguration) {
-        return new CreatureListener(stackLocation, stackerConfiguration);
     }
 
 }

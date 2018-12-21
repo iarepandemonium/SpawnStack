@@ -22,6 +22,7 @@
 package net.pandette.spawn_stack.mysql;
 
 import net.pandette.spawn_stack.StackLocation;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import javax.inject.Inject;
@@ -29,6 +30,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class StackSql implements StackLocation {
 
@@ -101,6 +104,36 @@ public class StackSql implements StackLocation {
         }
 
         return false;
+    }
+
+    @Override
+    public List<Location> getBetweenXandZ(String world, int x, int z) {
+        List<Location> locations = new ArrayList<>();
+        try (Connection connection = mySQL.open();
+             PreparedStatement ps = connection.prepareStatement("SELECT world,x,y,z FROM spawnstack WHERE" +
+                     " world = ? AND " +
+                     "(x BETWEEN ? AND ?) AND " +
+                     "(y BETWEEN ? AND ?)")) {
+            ps.setString(1, world);
+            ps.setInt(2, x);
+            ps.setInt(3, x + 16);
+            ps.setInt(4, z);
+            ps.setInt(5, z + 16);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                locations.add(new Location(
+                        Bukkit.getWorld(rs.getString("world")),
+                        rs.getInt("x"),
+                        rs.getInt("y"),
+                        rs.getInt("z")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return locations;
     }
 
 

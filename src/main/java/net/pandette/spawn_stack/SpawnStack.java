@@ -39,7 +39,8 @@ public class SpawnStack extends JavaPlugin {
 
         SingleComponent component = DaggerSingleComponent.builder().singleModule(new SingleModule(getConfig(), spawners, path)).build();
 
-        Bukkit.getPluginManager().registerEvents(component.listener(), this);
+        Bukkit.getPluginManager().registerEvents(component.creatureListener(), this);
+        Bukkit.getPluginManager().registerEvents(component.spawnerListener(), this);
     }
 
     @Override

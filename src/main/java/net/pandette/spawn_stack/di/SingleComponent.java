@@ -23,6 +23,7 @@ package net.pandette.spawn_stack.di;
 
 import dagger.Component;
 import net.pandette.spawn_stack.listeners.CreatureListener;
+import net.pandette.spawn_stack.listeners.SpawnerListener;
 
 import javax.inject.Singleton;
 
@@ -30,6 +31,8 @@ import javax.inject.Singleton;
 @Component(modules = SingleModule.class)
 public interface SingleComponent {
 
-    CreatureListener listener();
+    CreatureListener creatureListener();
+
+    SpawnerListener spawnerListener();
 
 }
