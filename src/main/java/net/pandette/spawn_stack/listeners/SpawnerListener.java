@@ -1,12 +1,13 @@
 package net.pandette.spawn_stack.listeners;
 
 import net.pandette.spawn_stack.StackLocation;
+import net.pandette.spawn_stack.StackerConfiguration;
 import net.pandette.spawn_stack.util.VersionUtil;
-import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.CreatureSpawner;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -22,10 +23,12 @@ import java.util.List;
 public class SpawnerListener implements Listener {
 
     private final StackLocation stackLocation;
+    private final StackerConfiguration configuration;
 
     @Inject
-    public SpawnerListener(StackLocation stackLocation) {
+    public SpawnerListener(StackLocation stackLocation, StackerConfiguration configuration) {
         this.stackLocation = stackLocation;
+        this.configuration = configuration;
     }
 
     @EventHandler
@@ -35,7 +38,6 @@ public class SpawnerListener implements Listener {
 
         List<Location> locationList = stackLocation
                 .getBetweenXandZ(chunk.getWorld().getName(), chunk.getX(), chunk.getZ());
-        Bukkit.broadcastMessage(locationList.size() + "");
 
         if (!locationList.isEmpty()) {
             for (Location location : locationList) {
@@ -46,12 +48,21 @@ public class SpawnerListener implements Listener {
 
                 event.setCancelled(true);
 
-                CreatureSpawner creatureSpawner = (CreatureSpawner) event.getBlock().getState();
+                CreatureSpawner creatureSpawner = (CreatureSpawner) location.getBlock().getState();
                 int size = stackLocation.getSize(location);
 
-                int delay = creatureSpawner.getDelay() * size;
+                Player player = event.getPlayer();
+
+                if((configuration.getDefaultSpawnerDelay() / size) < 10) {
+                    String message = configuration.getMessage("too_low_delay", "&4This spawner can no longer be upgraded!");
+                    player.sendMessage(message);
+                    return;
+                }
+
+                player.getInventory().removeItem(new ItemStack(Material.MOB_SPAWNER));
+                player.updateInventory();
                 stackLocation.updateLocation(location, size + 1);
-                creatureSpawner.setDelay(delay / (size + 1));
+                creatureSpawner.update();
                 return;
             }
         }
@@ -62,19 +73,16 @@ public class SpawnerListener implements Listener {
     @EventHandler
     public void onBreakStack(BlockBreakEvent event) {
         Location location = event.getBlock().getLocation();
-        if(event.getBlock().getType() != Material.MOB_SPAWNER || !stackLocation.isSpawner(location)) return;
+        if (event.getBlock().getType() != Material.MOB_SPAWNER || !stackLocation.isSpawner(location)) return;
 
         int size = stackLocation.getSize(location);
 
-        if(size == 1) {
+        if (size == 1) {
             stackLocation.deleteLocation(location);
         } else {
             event.setCancelled(true);
             stackLocation.updateLocation(location, size - 1);
             CreatureSpawner creatureSpawnerBlock = (CreatureSpawner) event.getBlock().getState();
-
-            int delay = creatureSpawnerBlock.getDelay() * size;
-            creatureSpawnerBlock.setDelay(delay / (size - 1));
 
             ItemStack spawner = new ItemStack(Material.MOB_SPAWNER, 1);
             BlockStateMeta bsm = (BlockStateMeta) spawner.getItemMeta();

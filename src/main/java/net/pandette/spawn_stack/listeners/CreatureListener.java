@@ -23,34 +23,47 @@ package net.pandette.spawn_stack.listeners;
 
 import net.pandette.spawn_stack.StackLocation;
 import net.pandette.spawn_stack.StackerConfiguration;
+import org.bukkit.Bukkit;
+import org.bukkit.block.CreatureSpawner;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.SpawnerSpawnEvent;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
-@Singleton
 public class CreatureListener implements Listener {
 
     private final List<UUID> spawnedCreatures = new ArrayList<>();
 
     private final StackLocation stackLocation;
     private final StackerConfiguration configuration;
+    private final JavaPlugin plugin;
 
     @Inject
-    public CreatureListener(StackLocation stackLocation, StackerConfiguration configuration) {
+    public CreatureListener(StackLocation stackLocation, StackerConfiguration configuration, JavaPlugin plugin) {
         this.stackLocation = stackLocation;
         this.configuration = configuration;
+        this.plugin = plugin;
     }
 
     @EventHandler
     public void onSpawn(SpawnerSpawnEvent event) {
-        if(!stackLocation.isSpawner(event.getSpawner().getLocation())) return;
+        CreatureSpawner spawner = event.getSpawner();
+
+        if(!stackLocation.isSpawner(spawner.getLocation())) return;
+
+        int maxDelay = configuration.getDefaultSpawnerDelay() / stackLocation.getSize(spawner.getLocation());
+
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            spawner.setDelay(new Random().nextInt(maxDelay));
+            spawner.update();
+        }, 1L);
 
         spawnedCreatures.add(event.getEntity().getUniqueId());
     }

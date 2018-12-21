@@ -30,6 +30,8 @@ soulitem:
   #A number between 0 and 1, decimal.
   dropchance: 1.3
 
+spawner_default_delay: 200
+
 database:
   enable: false
   url: pandette.net
@@ -41,6 +43,7 @@ database:
 messages:
   not_enough_souls: '&4You do not have enough souls for this spawner!'
   paid_souls: '&aYou have upgraded this spawner to level {level}!'
+  too_low_delay: '&4This spawner can no longer be upgraded!'
 
 soulcost:
   BAT: 1

@@ -40,29 +40,42 @@ public class SoulListener implements Listener {
 
         CreatureSpawner creatureSpawner = (CreatureSpawner) block.getState();
 
+        Player player = event.getPlayer();
+
+        if(!player.getInventory().getItemInHand().isSimilar(configuration.getSoulItem())) return;
+
+
         EntityType type = VersionUtil.convertCreatureType(creatureSpawner.getCreatureTypeName());
         Integer cost = configuration.getSoulsPerCreature(type.name());
-        if (cost == null) return;
-
-        Player player = event.getPlayer();
-        if (!player.getInventory().containsAtLeast(configuration.getSoulItem(), cost)) {
-            player.sendMessage(configuration.getMessage("not_enough_souls", "&4You do not have enough souls for this spawner!"));
+        if (cost == null) {
+            player.sendMessage(configuration.getMessage("not_soul_upgrade",
+                    "&4This spawner type cannot be upgraded with souls!"));
             return;
         }
 
+        if (!player.getInventory().containsAtLeast(configuration.getSoulItem(), cost)) {
+            player.sendMessage(configuration.getMessage("not_enough_souls",
+                    "&4You do not have enough souls for this spawner!"));
+            return;
+        }
+
+        int size = stackLocation.getSize(block.getLocation());
+
+        if((configuration.getDefaultSpawnerDelay() / size) < 10) {
+            String message = configuration.getMessage("too_low_delay", "&4This spawner can no longer be upgraded!");
+            player.sendMessage(message);
+            return;
+        }
 
         ItemStack stack = configuration.getSoulItem();
         stack.setAmount(cost);
-        player.getInventory().remove(stack);
+        player.getInventory().removeItem(stack);
         player.updateInventory();
 
-        int size = stackLocation.getSize(block.getLocation());
 
         String message = configuration.getMessage("paid_souls", "&aYou have upgraded this spawner to level {level}!");
         player.sendMessage(message.replace("{level}", String.valueOf(size + 1)));
 
-        int delay = creatureSpawner.getDelay() * size;
         stackLocation.updateLocation(block.getLocation(), size + 1);
-        creatureSpawner.setDelay(delay / (size + 1));
     }
 }

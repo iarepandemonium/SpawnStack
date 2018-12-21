@@ -65,7 +65,6 @@ public class StackYaml implements StackLocation {
     @Override
     public void updateLocation(Location location, int size) {
         locations.put(location, size);
-        Bukkit.broadcastMessage("Putting!");
         custom.get().set("locations." + gather(location), size);
         custom.save();
     }

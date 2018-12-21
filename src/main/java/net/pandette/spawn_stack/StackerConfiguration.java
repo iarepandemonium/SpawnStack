@@ -101,4 +101,8 @@ public class StackerConfiguration {
         return ChatColor.translateAlternateColorCodes('&', configuration.getString("messages." + messageType, defaultMessage));
     }
 
+    public int getDefaultSpawnerDelay(){
+        return configuration.getInt("spawner_default_delay", 600);
+    }
+
 }

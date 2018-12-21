@@ -25,11 +25,13 @@ import dagger.Module;
 import dagger.Provides;
 import net.pandette.spawn_stack.StackLocation;
 import net.pandette.spawn_stack.StackerConfiguration;
+import net.pandette.spawn_stack.listeners.CreatureListener;
 import net.pandette.spawn_stack.mysql.MySQL;
 import net.pandette.spawn_stack.mysql.StackSql;
 import net.pandette.spawn_stack.yaml.CustomYamlFile;
 import net.pandette.spawn_stack.yaml.StackYaml;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.inject.Singleton;
 import java.io.InputStream;
@@ -41,11 +43,13 @@ public class SingleModule {
     private final FileConfiguration configuration;
     private final InputStream stream;
     private final String path;
+    private final JavaPlugin plugin;
 
-    public SingleModule(FileConfiguration configuration, InputStream stream, String path) {
+    public SingleModule(FileConfiguration configuration, InputStream stream, String path, JavaPlugin plugin) {
         this.configuration = configuration;
         this.stream = stream;
         this.path = path;
+        this.plugin = plugin;
     }
 
     @Singleton
@@ -62,6 +66,12 @@ public class SingleModule {
         } else {
             return new StackYaml(new CustomYamlFile(stream, path));
         }
+    }
+
+    @Singleton
+    @Provides
+    CreatureListener providesCreatureListener(StackLocation location, StackerConfiguration configuration){
+        return new CreatureListener(location, configuration, plugin);
     }
 
 }

@@ -76,6 +76,7 @@ public class CustomYamlFile {
         File file = new File(path);
         try {
             config = YamlConfiguration.loadConfiguration(file);
+            configurationFile = file;
         } catch (Exception e) {
             //No need to log that file wasn't found.
         }
