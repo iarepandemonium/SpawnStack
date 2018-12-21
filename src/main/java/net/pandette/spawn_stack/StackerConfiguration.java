@@ -21,6 +21,7 @@
 
 package net.pandette.spawn_stack;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -52,7 +53,7 @@ public class StackerConfiguration {
         int durability = configuration.getInt("soulitem.durability", 0);
         String title = configuration.getString("soulitem.title", "Soul");
         List<String> lore = configuration.getStringList("soulitem.lore");
-        if(lore == null) {
+        if (lore == null) {
             lore = Collections.singletonList("Soul Item");
         }
 
@@ -65,25 +66,39 @@ public class StackerConfiguration {
         return stack;
     }
 
-    public double getSoulDropChance(){
+    public double getSoulDropChance() {
         return configuration.getDouble("soulitem.dropchance", 1.3);
     }
 
-    public String getDatabaseUsername(){
+    public String getDatabaseUsername() {
         return configuration.getString("database.user", "minecraft");
     }
 
-    public String getDatabasePassword(){
+    public String getDatabasePassword() {
         return configuration.getString("database.password", "superStronkPassword");
     }
 
-    public String buildJDBC(){
+    public String buildJDBC() {
         String jdbc = "jdbc:mysql://";
-        String url = configuration.getString("database.url","");
+        String url = configuration.getString("database.url", "");
         String database = configuration.getString("database.database", "");
         boolean useSSL = configuration.getBoolean("database.usessl", false);
         return jdbc + url + "/" + database + "?useSSL=" + useSSL;
 
+    }
+
+    public Integer getSoulsPerCreature(String type) {
+        if (configuration.getConfigurationSection("soulcost") == null) {
+            configuration.createSection("soulcost");
+            return null;
+        }
+
+        if (!configuration.isSet("soulcost." + type)) return null;
+        else return configuration.getInt("soulcost." + type);
+    }
+
+    public String getMessage(String messageType, String defaultMessage) {
+        return ChatColor.translateAlternateColorCodes('&', configuration.getString("messages." + messageType, defaultMessage));
     }
 
 }

@@ -41,6 +41,7 @@ public class SpawnStack extends JavaPlugin {
 
         Bukkit.getPluginManager().registerEvents(component.creatureListener(), this);
         Bukkit.getPluginManager().registerEvents(component.spawnerListener(), this);
+        Bukkit.getPluginManager().registerEvents(component.soulListener(), this);
     }
 
     @Override

@@ -37,3 +37,10 @@ database:
   password: ReallyStronkPassword
   database: super_cool_db
   useSSL: false
+
+messages:
+  not_enough_souls: You do not have enough souls for this spawner!
+
+soulcost:
+  BAT: 1
+  SKELETON: 2

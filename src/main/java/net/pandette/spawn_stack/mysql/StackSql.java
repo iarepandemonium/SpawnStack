@@ -40,6 +40,27 @@ public class StackSql implements StackLocation {
     @Inject
     public StackSql(MySQL mySQL) {
         this.mySQL = mySQL;
+        createTable();
+    }
+
+    private void createTable() {
+        try (Connection connection = mySQL.open();
+             PreparedStatement ps = connection.prepareStatement("CREATE TABLE IF NOT EXISTS spawnstack " +
+                     "(" +
+                     "  world VARCHAR(32) NOT NULL, " +
+                     "  x     INTEGER     NOT NULL, " +
+                     "  y     INTEGER     NOT NULL, " +
+                     "  z     INTEGER     NOT NULL, " +
+                     "  size  INTEGER     NOT NULL, " +
+                     "  CONSTRAINT pk_stack_location PRIMARY KEY (world, x, y, z), " +
+                     "  CONSTRAINT un_stack_location UNIQUE (world, x, y, z) " +
+                     ")" +
+                     " ENGINE = InnoDB;")) {
+
+            ps.executeQuery();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
