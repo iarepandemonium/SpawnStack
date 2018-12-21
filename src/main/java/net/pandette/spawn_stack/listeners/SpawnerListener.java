@@ -31,6 +31,12 @@ public class SpawnerListener implements Listener {
         this.configuration = configuration;
     }
 
+    /**
+     * When placing a mob spawner, it updates the StackLocation tracker with the information. If one already
+     * exists in the same chunk, it will stack them together.
+     *
+     * @param event BlockPlaceEvent
+     */
     @EventHandler
     public void onPlaceStack(BlockPlaceEvent event) {
         if (event.getBlockPlaced().getType() != Material.MOB_SPAWNER) return;
@@ -70,6 +76,11 @@ public class SpawnerListener implements Listener {
         stackLocation.updateLocation(event.getBlock().getLocation(), 1);
     }
 
+    /**
+     * Reduces or deletes a mobspawner depending on the size of the spawner.
+     *
+     * @param event BlockBreakEvent
+     */
     @EventHandler
     public void onBreakStack(BlockBreakEvent event) {
         Location location = event.getBlock().getLocation();

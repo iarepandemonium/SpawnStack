@@ -52,28 +52,40 @@ public class CreatureListener implements Listener {
         this.plugin = plugin;
     }
 
-    @EventHandler
+    /**
+     * This method check is a spawner from the plugin spawned a creature. It then sets the delay to a random number
+     * that is lower than the max delay possible.  It also adds any spawned creature to a list to track it.
+     *
+     * @param event SpawnerSpawnEvent
+     */
+    @EventHandler(ignoreCancelled = true)
     public void onSpawn(SpawnerSpawnEvent event) {
         CreatureSpawner spawner = event.getSpawner();
 
-        if(!stackLocation.isSpawner(spawner.getLocation())) return;
+        if (!stackLocation.isSpawner(spawner.getLocation())) return;
 
         int maxDelay = configuration.getDefaultSpawnerDelay() / stackLocation.getSize(spawner.getLocation());
 
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             spawner.setDelay(new Random().nextInt(maxDelay));
             spawner.update();
-        }, 1L);
+        }, 0L);
 
         spawnedCreatures.add(event.getEntity().getUniqueId());
     }
 
+    /**
+     * This kills a spawned creature that was saved to the list, tracking it by UUID, and then
+     * removes it from the list before having a random chance to drop a soul item.
+     *
+     * @param event EntityDeathEvent
+     */
     @EventHandler
     public void onDeath(EntityDeathEvent event) {
-        if(!spawnedCreatures.contains(event.getEntity().getUniqueId())) return;
+        if (!spawnedCreatures.contains(event.getEntity().getUniqueId())) return;
 
         spawnedCreatures.remove(event.getEntity().getUniqueId());
-        if(Math.random() > configuration.getSoulDropChance()) return;
+        if (Math.random() > configuration.getSoulDropChance()) return;
 
         event.getDrops().add(configuration.getSoulItem());
     }

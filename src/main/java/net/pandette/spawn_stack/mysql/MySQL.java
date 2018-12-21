@@ -33,6 +33,11 @@ public class MySQL {
 
     private final HikariDataSource source;
 
+    /**
+     * Configuration for connection poop for Hikari.
+     *
+     * @param configuration Stacker's Configuration
+     */
     @Inject
     public MySQL(StackerConfiguration configuration) {
         HikariConfig config = new HikariConfig();

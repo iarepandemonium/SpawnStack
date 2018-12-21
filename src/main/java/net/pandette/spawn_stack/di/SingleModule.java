@@ -34,21 +34,18 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.inject.Singleton;
-import java.io.InputStream;
 
 @Module
 public class SingleModule {
 
 
     private final FileConfiguration configuration;
-    private final InputStream stream;
     private final String path;
     private final JavaPlugin plugin;
 
-    public SingleModule(FileConfiguration configuration, InputStream stream, String path, JavaPlugin plugin) {
+    public SingleModule(FileConfiguration configuration, JavaPlugin plugin) {
         this.configuration = configuration;
-        this.stream = stream;
-        this.path = path;
+        this.path = plugin.getDataFolder() + "/" + "spawners.yml";
         this.plugin = plugin;
     }
 
@@ -64,13 +61,13 @@ public class SingleModule {
         if (configuration.getBoolean("database.enabled", false)) {
             return new StackSql(new MySQL(stacker));
         } else {
-            return new StackYaml(new CustomYamlFile(stream, path));
+            return new StackYaml(new CustomYamlFile(path));
         }
     }
 
     @Singleton
     @Provides
-    CreatureListener providesCreatureListener(StackLocation location, StackerConfiguration configuration){
+    CreatureListener providesCreatureListener(StackLocation location, StackerConfiguration configuration) {
         return new CreatureListener(location, configuration, plugin);
     }
 

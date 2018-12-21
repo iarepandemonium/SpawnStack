@@ -43,6 +43,9 @@ public class StackSql implements StackLocation {
         createTable();
     }
 
+    /**
+     * If the table doesn't exist in the database, this creates the table.
+     */
     private void createTable() {
         try (Connection connection = mySQL.open();
              PreparedStatement ps = connection.prepareStatement("CREATE TABLE IF NOT EXISTS spawnstack " +
@@ -157,7 +160,12 @@ public class StackSql implements StackLocation {
         return locations;
     }
 
-
+    /**
+     * This sets a location in SQL using the 1-4 parameters to set it.
+     * @param ps Prepared Statement
+     * @param location Location
+     * @throws SQLException Exception that can be thrown.
+     */
     private void setSqlLocation(PreparedStatement ps, Location location) throws SQLException {
         ps.setString(1, location.getWorld().getName());
         ps.setInt(2, location.getBlockX());

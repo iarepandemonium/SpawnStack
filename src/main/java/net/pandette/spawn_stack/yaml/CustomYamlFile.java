@@ -26,9 +26,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 
 public class CustomYamlFile {
 
@@ -36,28 +33,11 @@ public class CustomYamlFile {
 
     private File configurationFile = null;
     private FileConfiguration config = null;
-    private final InputStream stream;
     private final String path;
 
-    public CustomYamlFile(InputStream stream, String path) {
-        this.stream = stream;
+    public CustomYamlFile(String path) {
         this.path = path;
         get();
-    }
-
-    public void reload() {
-        Reader defConfigStream = null;
-        try {
-            defConfigStream = new InputStreamReader(stream, CHARACTER_ENCODING);
-        } catch (Exception e) {
-            //No default configuration
-        }
-
-        if (defConfigStream != null) {
-            YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
-            config = new YamlConfiguration();
-            config.setDefaults(defConfig);
-        }
     }
 
 
@@ -68,21 +48,22 @@ public class CustomYamlFile {
         try {
             get().save(configurationFile);
         } catch (IOException ex) {
-            //TODO: Add logging
+            ex.printStackTrace();
         }
     }
 
     public FileConfiguration get() {
+        if(config != null) return config;
+
         File file = new File(path);
         try {
             config = YamlConfiguration.loadConfiguration(file);
-            configurationFile = file;
         } catch (Exception e) {
-            //No need to log that file wasn't found.
+            e.printStackTrace();
         }
 
-        if (config == null) {
-            reload();
+        if (configurationFile == null) {
+            configurationFile = file;
         }
 
         return config;

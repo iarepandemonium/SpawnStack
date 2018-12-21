@@ -85,23 +85,23 @@ public class StackYaml implements StackLocation {
     public List<Location> getBetweenXandZ(String world, int x, int z) {
         List<Location> locations = new ArrayList<>();
 
-        int X = x * 16;
-        int Z = z * 16;
-        for(Location location : this.locations.keySet()) {
-            if(isApplicableBlock(location, world, X, Z)) {
+        int X = x << 4;
+        int Z = z << 4;
+        for (Location location : this.locations.keySet()) {
+            if (isApplicableBlock(location, world, X, Z)) {
                 locations.add(location);
             }
         }
         return locations;
     }
 
-    private boolean isApplicableBlock(Location location, String world, int X, int Z){
+    private boolean isApplicableBlock(Location location, String world, int X, int Z) {
         return location.getWorld().getName().equals(world)
-                && inbetween(location.getBlockX(), X, X+16) && inbetween(location.getBlockZ(), Z, Z+16);
+                && inbetween(location.getBlockX(), X, X + 15) && inbetween(location.getBlockZ(), Z, Z + 15);
     }
 
-    private boolean inbetween(int num, int min, int max){
-        return num > min && num < max;
+    private boolean inbetween(int num, int min, int max) {
+        return num >= min && num <= max;
     }
 
     private Location split(String location) {

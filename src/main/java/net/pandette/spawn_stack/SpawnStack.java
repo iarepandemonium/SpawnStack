@@ -27,22 +27,16 @@ import net.pandette.spawn_stack.di.SingleModule;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.InputStream;
-
 public class SpawnStack extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        String file = "spawners.yml";
-        InputStream spawners = this.getResource(file);
-        String path = this.getDataFolder() + "/" + file;
-
-        if(!getDataFolder().exists()) {
+        if (!getDataFolder().exists()) {
             saveDefaultConfig();
         }
 
         SingleComponent component = DaggerSingleComponent.builder()
-                .singleModule(new SingleModule(getConfig(), spawners, path, this)).build();
+                .singleModule(new SingleModule(getConfig(), this)).build();
 
         Bukkit.getPluginManager().registerEvents(component.creatureListener(), this);
         Bukkit.getPluginManager().registerEvents(component.spawnerListener(), this);

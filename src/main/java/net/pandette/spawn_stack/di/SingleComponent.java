@@ -32,10 +32,22 @@ import javax.inject.Singleton;
 @Component(modules = SingleModule.class)
 public interface SingleComponent {
 
+    /**
+     * Gets the CreatureListener instance.
+     * @return CreatureListener instance
+     */
     CreatureListener creatureListener();
 
+    /**
+     * Gets the SpawnerListener instance.
+     * @return SpawnerListener instance
+     */
     SpawnerListener spawnerListener();
 
+    /**
+     * Gets the SoulListener instance.
+     * @return SoulListener instance
+     */
     SoulListener soulListener();
 
 }

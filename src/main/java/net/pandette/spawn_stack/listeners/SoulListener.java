@@ -29,6 +29,12 @@ public class SoulListener implements Listener {
         this.configuration = configuration;
     }
 
+    /**
+     * Allows a user to click with a soul.  If they are able to upgrade a spawner with souls it will upgrade and take
+     * the souls from them.
+     *
+     * @param event PlayerInteractEvent
+     */
     @EventHandler
     public void clickWithSoul(PlayerInteractEvent event) {
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
