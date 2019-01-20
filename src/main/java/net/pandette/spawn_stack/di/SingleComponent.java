@@ -21,33 +21,53 @@
 
 package net.pandette.spawn_stack.di;
 
-import dagger.Component;
+import net.pandette.spawn_stack.SpawnStackProvider;
+import net.pandette.spawn_stack.StackLocation;
 import net.pandette.spawn_stack.listeners.CreatureListener;
 import net.pandette.spawn_stack.listeners.SoulListener;
 import net.pandette.spawn_stack.listeners.SpawnerListener;
 
 import javax.inject.Singleton;
 
+import dagger.Component;
+
 @Singleton
 @Component(modules = SingleModule.class)
 public interface SingleComponent {
 
-    /**
-     * Gets the CreatureListener instance.
-     * @return CreatureListener instance
-     */
-    CreatureListener creatureListener();
+  /**
+   * Gets the CreatureListener instance.
+   *
+   * @return CreatureListener instance
+   */
+  CreatureListener creatureListener();
 
-    /**
-     * Gets the SpawnerListener instance.
-     * @return SpawnerListener instance
-     */
-    SpawnerListener spawnerListener();
+  /**
+   * Gets the SpawnerListener instance.
+   *
+   * @return SpawnerListener instance
+   */
+  SpawnerListener spawnerListener();
 
-    /**
-     * Gets the SoulListener instance.
-     * @return SoulListener instance
-     */
-    SoulListener soulListener();
+  /**
+   * Gets the SoulListener instance.
+   *
+   * @return SoulListener instance
+   */
+  SoulListener soulListener();
+
+  /**
+   * Gets the stack location object initialized in the module.
+   *
+   * @return Stack Location
+   */
+  StackLocation stackLocation();
+
+  /**
+   * Gets the spawn stack provider that is initialized in the module
+   *
+   * @return Spawn stack provider.
+   */
+  SpawnStackProvider spawnStackProvider();
 
 }

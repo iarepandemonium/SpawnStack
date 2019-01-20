@@ -40,6 +40,9 @@ database:
   database: super_cool_db
   useSSL: false
 
+hooks:
+  silkspawner: true
+
 messages:
   not_enough_souls: '&4You do not have enough souls for this spawner!'
   paid_souls: '&aYou have upgraded this spawner to level {level}!'

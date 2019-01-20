@@ -27,45 +27,45 @@ import java.util.List;
 
 public interface StackLocation {
 
-    /**
-     * Retrieve the size of the spawner.
-     *
-     * @param location Location of Spawner
-     * @return Size
-     */
-    int getSize(Location location);
+  /**
+   * Retrieve the size of the spawner.
+   *
+   * @param location Location of Spawner
+   * @return Size
+   */
+  int getSize(Location location);
 
-    /**
-     * Update the size of the spawner or add the location
-     *
-     * @param location Location to update or add
-     * @param size Spawner size
-     */
-    void updateLocation(Location location, int size);
+  /**
+   * Update the size of the spawner or add the location
+   *
+   * @param location Location to update or add
+   * @param size     Spawner size
+   */
+  void updateLocation(Location location, int size);
 
-    /**
-     * Delete the location of a spawner
-     *
-     * @param location location to delete
-     */
-    void deleteLocation(Location location);
+  /**
+   * Delete the location of a spawner
+   *
+   * @param location location to delete
+   */
+  void deleteLocation(Location location);
 
-    /**
-     * Check if a location has a spawner present.
-     *
-     * @param location Location to check
-     * @return is present.
-     */
-    boolean isSpawner(Location location);
+  /**
+   * Check if a location has a spawner present.
+   *
+   * @param location Location to check
+   * @return is present.
+   */
+  boolean isSpawner(Location location);
 
-    /**
-     * Get all spawners in the chunk that a spawner is being placed.
-     *
-     * @param world World to compare
-     * @param x X location
-     * @param z Z location
-     * @return List of all spawners in the chunk
-     */
-    List<Location> getBetweenXandZ(String world, int x, int z);
+  /**
+   * Get all spawners in the chunk that a spawner is being placed.
+   *
+   * @param world World to compare
+   * @param x     X location
+   * @param z     Z location
+   * @return List of all spawners in the chunk
+   */
+  List<Location> getBetweenXandZ(String world, int x, int z);
 
 }

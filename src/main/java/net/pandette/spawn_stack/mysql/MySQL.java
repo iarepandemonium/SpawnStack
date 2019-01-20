@@ -23,43 +23,46 @@ package net.pandette.spawn_stack.mysql;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+
 import net.pandette.spawn_stack.StackerConfiguration;
 
-import javax.inject.Inject;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import javax.inject.Inject;
+
 public class MySQL {
 
-    private final HikariDataSource source;
+  private final HikariDataSource source;
 
-    /**
-     * Configuration for connection poop for Hikari.
-     *
-     * @param configuration Stacker's Configuration
-     */
-    @Inject
-    public MySQL(StackerConfiguration configuration) {
-        HikariConfig config = new HikariConfig();
-        config.setJdbcUrl(configuration.buildJDBC());
-        config.setUsername(configuration.getDatabaseUsername());
-        config.setPassword(configuration.getDatabasePassword());
-        config.setDataSourceClassName("com.mysql.jdbc.jdbc2.optional.MysqlDataSource");
-        config.addDataSourceProperty("cachePrepStmts", "true");
-        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
-        config.addDataSourceProperty("prepStmtCacheSize", "250");
-        config.addDataSourceProperty("useServerPrepStmts", "true");
-        source = new HikariDataSource(config);
-    }
+  /**
+   * Configuration for connection poop for Hikari.
+   *
+   * @param configuration Stacker's Configuration
+   */
+  @Inject
+  public MySQL(StackerConfiguration configuration) {
+    HikariConfig config = new HikariConfig();
+    config.setJdbcUrl(configuration.buildJDBC());
+    config.setUsername(configuration.getDatabaseUsername());
+    config.setPassword(configuration.getDatabasePassword());
+    config.addDataSourceProperty("databaseName", configuration.getDatabaseName());
+    config.setDataSourceClassName("com.mysql.jdbc.jdbc2.optional.MysqlDataSource");
+    config.addDataSourceProperty("cachePrepStmts", "true");
+    config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+    config.addDataSourceProperty("prepStmtCacheSize", "250");
+    config.addDataSourceProperty("useServerPrepStmts", "true");
+    source = new HikariDataSource(config);
+  }
 
-    public Connection open() {
-        Connection connection = null;
-        try {
-            connection = source.getConnection();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return connection;
+  public Connection open() {
+    Connection connection = null;
+    try {
+      connection = source.getConnection();
+    } catch (SQLException e) {
+      e.printStackTrace();
     }
+    return connection;
+  }
 
 }

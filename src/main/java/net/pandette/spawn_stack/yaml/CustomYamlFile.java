@@ -29,52 +29,52 @@ import java.io.IOException;
 
 public class CustomYamlFile {
 
-    private static final String CHARACTER_ENCODING = "UTF8";
+  private static final String CHARACTER_ENCODING = "UTF8";
 
-    private File configurationFile = null;
-    private FileConfiguration config = null;
-    private final String path;
+  private File configurationFile = null;
+  private FileConfiguration config = null;
+  private final String path;
 
-    public CustomYamlFile(String path) {
-        this.path = path;
-        get();
+  public CustomYamlFile(String path) {
+    this.path = path;
+    get();
+  }
+
+  /**
+   * Save the configuration
+   */
+  public void save() {
+    if (config == null || configurationFile == null) {
+      return;
+    }
+    try {
+      get().save(configurationFile);
+    } catch (IOException ex) {
+      ex.printStackTrace();
+    }
+  }
+
+  /**
+   * Get the configuration
+   *
+   * @return Configuration
+   */
+  public FileConfiguration get() {
+    if (config != null) return config;
+
+    File file = new File(path);
+    try {
+      config = YamlConfiguration.loadConfiguration(file);
+    } catch (Exception e) {
+      e.printStackTrace();
     }
 
-    /**
-     * Save the configuration
-     */
-    public void save() {
-        if (config == null || configurationFile == null) {
-            return;
-        }
-        try {
-            get().save(configurationFile);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
+    if (configurationFile == null) {
+      configurationFile = file;
     }
 
-    /**
-     * Get the configuration
-     *
-     * @return Configuration
-     */
-    public FileConfiguration get() {
-        if(config != null) return config;
-
-        File file = new File(path);
-        try {
-            config = YamlConfiguration.loadConfiguration(file);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        if (configurationFile == null) {
-            configurationFile = file;
-        }
-
-        return config;
-    }
+    return config;
+  }
 
 
 }

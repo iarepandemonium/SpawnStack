@@ -27,125 +27,135 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import javax.inject.Inject;
 import java.util.Collections;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import static org.bukkit.Material.GHAST_TEAR;
 
 public class StackerConfiguration {
 
-    private final FileConfiguration configuration;
+  private final FileConfiguration configuration;
 
-    @Inject
-    public StackerConfiguration(FileConfiguration configuration) {
-        this.configuration = configuration;
+  @Inject
+  public StackerConfiguration(FileConfiguration configuration) {
+    this.configuration = configuration;
+  }
+
+  /**
+   * Build the soul item that is currency for this plugin.
+   *
+   * @return Itemstack of soul item
+   */
+  public ItemStack getSoulItem() {
+    Material material = GHAST_TEAR;
+    try {
+      material = Material.valueOf(configuration.getString("soulitem.material", "GHAST_TEAR").toUpperCase());
+    } catch (EnumConstantNotPresentException ex) {
+      //No need to log this.
     }
 
-    /**
-     * Build the soul item that is currency for this plugin.
-     *
-     * @return Itemstack of soul item
-     */
-    public ItemStack getSoulItem() {
-        Material material = GHAST_TEAR;
-        try {
-            material = Material.valueOf(configuration.getString("soulitem.material", "GHAST_TEAR").toUpperCase());
-        } catch (EnumConstantNotPresentException ex) {
-            //No need to log this.
-        }
-
-        int durability = configuration.getInt("soulitem.durability", 0);
-        String title = configuration.getString("soulitem.title", "Soul");
-        List<String> lore = configuration.getStringList("soulitem.lore");
-        if (lore == null) {
-            lore = Collections.singletonList("Soul Item");
-        }
-
-        ItemStack stack = new ItemStack(material);
-        stack.setDurability((short) durability);
-        ItemMeta meta = stack.getItemMeta();
-        meta.setDisplayName(title);
-        meta.setLore(lore);
-        stack.setItemMeta(meta);
-        return stack;
+    int durability = configuration.getInt("soulitem.durability", 0);
+    String title = configuration.getString("soulitem.title", "Soul");
+    List<String> lore = configuration.getStringList("soulitem.lore");
+    if (lore == null) {
+      lore = Collections.singletonList("Soul Item");
     }
 
-    /**
-     * Get the drop chance of the soul item.
-     *
-     * @return Drop Chance
-     */
-    public double getSoulDropChance() {
-        return configuration.getDouble("soulitem.dropchance", 1.3);
+    ItemStack stack = new ItemStack(material);
+    stack.setDurability((short) durability);
+    ItemMeta meta = stack.getItemMeta();
+    meta.setDisplayName(title);
+    meta.setLore(lore);
+    stack.setItemMeta(meta);
+    return stack;
+  }
+
+  /**
+   * Get the drop chance of the soul item.
+   *
+   * @return Drop Chance
+   */
+  public double getSoulDropChance() {
+    return configuration.getDouble("soulitem.dropchance", 1.3);
+  }
+
+  /**
+   * Get the database username for MYSQL
+   *
+   * @return username
+   */
+  public String getDatabaseUsername() {
+    return configuration.getString("database.user", "minecraft");
+  }
+
+  /**
+   * Get the database password for MYSQL
+   *
+   * @return password
+   */
+  public String getDatabasePassword() {
+    return configuration.getString("database.password", "superStronkPassword");
+  }
+
+  /**
+   * Get the database name for MYSQL
+   *
+   * @return name
+   */
+  public String getDatabaseName() {
+    return configuration.getString("database.database", "database");
+  }
+
+  /**
+   * Get the JDBC url for MYSQL
+   *
+   * @return Url
+   */
+  public String buildJDBC() {
+    String jdbc = "jdbc:mysql://";
+    String url = configuration.getString("database.url", "");
+    String database = configuration.getString("database.database", "");
+    boolean useSSL = configuration.getBoolean("database.usessl", false);
+    return jdbc + url + "/" + database + "?useSSL=" + useSSL;
+
+  }
+
+  /**
+   * Get the cost of souls per creature
+   *
+   * @param type Type
+   * @return Cost of souls
+   */
+  public Integer getSoulsPerCreature(String type) {
+    if (configuration.getConfigurationSection("soulcost") == null) {
+      configuration.createSection("soulcost");
+      return null;
     }
 
-    /**
-     * Get the database username for MYSQL
-     *
-     * @return username
-     */
-    public String getDatabaseUsername() {
-        return configuration.getString("database.user", "minecraft");
-    }
+    if (!configuration.isSet("soulcost." + type)) return null;
+    else return configuration.getInt("soulcost." + type);
+  }
 
-    /**
-     * Get the database password for MYSQL
-     *
-     * @return password
-     */
-    public String getDatabasePassword() {
-        return configuration.getString("database.password", "superStronkPassword");
-    }
+  /**
+   * Get a message from the configuration file.
+   *
+   * @param messageType    The message type to get
+   * @param defaultMessage A default message incase someone deleted the configuration
+   * @return Message
+   */
+  public String getMessage(String messageType, String defaultMessage) {
+    return ChatColor.translateAlternateColorCodes('&', configuration.getString("messages." + messageType, defaultMessage));
+  }
 
-    /**
-     * Get the JDBC url for MYSQL
-     *
-     * @return Url
-     */
-    public String buildJDBC() {
-        String jdbc = "jdbc:mysql://";
-        String url = configuration.getString("database.url", "");
-        String database = configuration.getString("database.database", "");
-        boolean useSSL = configuration.getBoolean("database.usessl", false);
-        return jdbc + url + "/" + database + "?useSSL=" + useSSL;
-
-    }
-
-    /**
-     * Get the cost of souls per creature
-     *
-     * @param type Type
-     * @return Cost of souls
-     */
-    public Integer getSoulsPerCreature(String type) {
-        if (configuration.getConfigurationSection("soulcost") == null) {
-            configuration.createSection("soulcost");
-            return null;
-        }
-
-        if (!configuration.isSet("soulcost." + type)) return null;
-        else return configuration.getInt("soulcost." + type);
-    }
-
-    /**
-     * Get a message from the configuration file.
-     *
-     * @param messageType The message type to get
-     * @param defaultMessage A default message incase someone deleted the configuration
-     * @return Message
-     */
-    public String getMessage(String messageType, String defaultMessage) {
-        return ChatColor.translateAlternateColorCodes('&', configuration.getString("messages." + messageType, defaultMessage));
-    }
-
-    /**
-     * Get the delay for the spawner, if none is created the minecraft default of 200 is selected
-     *
-     * @return Spawn time.
-     */
-    public int getDefaultSpawnerDelay(){
-        return configuration.getInt("spawner_default_delay", 200);
-    }
+  /**
+   * Get the delay for the spawner, if none is created the minecraft default of 200 is selected
+   *
+   * @return Spawn time.
+   */
+  public int getDefaultSpawnerDelay() {
+    return configuration.getInt("spawner_default_delay", 200);
+  }
 
 }

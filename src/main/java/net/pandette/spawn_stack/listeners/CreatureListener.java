@@ -23,6 +23,7 @@ package net.pandette.spawn_stack.listeners;
 
 import net.pandette.spawn_stack.StackLocation;
 import net.pandette.spawn_stack.StackerConfiguration;
+
 import org.bukkit.Bukkit;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.event.EventHandler;
@@ -31,64 +32,66 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.SpawnerSpawnEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
+import javax.inject.Inject;
+
 public class CreatureListener implements Listener {
 
-    private final List<UUID> spawnedCreatures = new ArrayList<>();
+  private final List<UUID> spawnedCreatures = new ArrayList<>();
 
-    private final StackLocation stackLocation;
-    private final StackerConfiguration configuration;
-    private final JavaPlugin plugin;
+  private final StackLocation stackLocation;
+  private final StackerConfiguration configuration;
+  private final JavaPlugin plugin;
 
-    @Inject
-    public CreatureListener(StackLocation stackLocation, StackerConfiguration configuration, JavaPlugin plugin) {
-        this.stackLocation = stackLocation;
-        this.configuration = configuration;
-        this.plugin = plugin;
-    }
+  @Inject
+  public CreatureListener(StackLocation stackLocation, StackerConfiguration configuration, JavaPlugin plugin) {
+    this.stackLocation = stackLocation;
+    this.configuration = configuration;
+    this.plugin = plugin;
+  }
 
-    /**
-     * This method check is a spawner from the plugin spawned a creature. It then sets the delay to a random number
-     * that is lower than the max delay possible.  It also adds any spawned creature to a list to track it.
-     *
-     * @param event SpawnerSpawnEvent
-     */
-    @EventHandler(ignoreCancelled = true)
-    public void onSpawn(SpawnerSpawnEvent event) {
-        CreatureSpawner spawner = event.getSpawner();
+  /**
+   * This method check is a spawner from the plugin spawned a creature. It then sets the delay to a
+   * random number that is lower than the max delay possible.  It also adds any spawned creature to
+   * a list to track it.
+   *
+   * @param event SpawnerSpawnEvent
+   */
+  @EventHandler(ignoreCancelled = true)
+  public void onSpawn(SpawnerSpawnEvent event) {
+    CreatureSpawner spawner = event.getSpawner();
 
-        if (!stackLocation.isSpawner(spawner.getLocation())) return;
+    if (!stackLocation.isSpawner(spawner.getLocation())) return;
 
-        int maxDelay = configuration.getDefaultSpawnerDelay() / stackLocation.getSize(spawner.getLocation());
+    int maxDelay = configuration.getDefaultSpawnerDelay() / stackLocation.getSize(spawner.getLocation());
 
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            spawner.setDelay(new Random().nextInt(maxDelay));
-            spawner.update();
-        }, 0L);
+    Bukkit.getScheduler().runTaskLater(plugin, () -> {
+      spawner.setDelay(new Random().nextInt(maxDelay));
+      spawner.update();
+    }, 0L);
 
-        spawnedCreatures.add(event.getEntity().getUniqueId());
-    }
+    spawnedCreatures.add(event.getEntity().getUniqueId());
+  }
 
-    /**
-     * This kills a spawned creature that was saved to the list, tracking it by UUID, and then
-     * removes it from the list before having a random chance to drop a soul item.
-     *
-     * @param event EntityDeathEvent
-     */
-    @EventHandler
-    public void onDeath(EntityDeathEvent event) {
-        if (!spawnedCreatures.contains(event.getEntity().getUniqueId())) return;
+  /**
+   * This kills a spawned creature that was saved to the list, tracking it by UUID, and then removes
+   * it from the list before having a random chance to drop a soul item.
+   *
+   * @param event EntityDeathEvent
+   */
+  @EventHandler
+  public void onDeath(EntityDeathEvent event) {
+    if (!spawnedCreatures.contains(event.getEntity().getUniqueId())) return;
 
-        spawnedCreatures.remove(event.getEntity().getUniqueId());
-        if (Math.random() > configuration.getSoulDropChance()) return;
+    spawnedCreatures.remove(event.getEntity().getUniqueId());
+    if (Math.random() > configuration.getSoulDropChance()) return;
 
-        event.getDrops().add(configuration.getSoulItem());
-    }
+    event.getDrops().add(configuration.getSoulItem());
+  }
 
 
 }

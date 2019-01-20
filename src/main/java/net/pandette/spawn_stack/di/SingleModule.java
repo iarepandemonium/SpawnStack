@@ -21,54 +21,69 @@
 
 package net.pandette.spawn_stack.di;
 
-import dagger.Module;
-import dagger.Provides;
+import net.pandette.spawn_stack.DefaultSpawnStackProvider;
+import net.pandette.spawn_stack.SpawnStackProvider;
 import net.pandette.spawn_stack.StackLocation;
 import net.pandette.spawn_stack.StackerConfiguration;
+import net.pandette.spawn_stack.hooks.SilkSpawnerHook;
 import net.pandette.spawn_stack.listeners.CreatureListener;
 import net.pandette.spawn_stack.mysql.MySQL;
 import net.pandette.spawn_stack.mysql.StackSql;
 import net.pandette.spawn_stack.yaml.CustomYamlFile;
 import net.pandette.spawn_stack.yaml.StackYaml;
+
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.inject.Singleton;
 
+import dagger.Module;
+import dagger.Provides;
+
 @Module
 public class SingleModule {
 
 
-    private final FileConfiguration configuration;
-    private final String path;
-    private final JavaPlugin plugin;
+  private final FileConfiguration configuration;
+  private final String path;
+  private final JavaPlugin plugin;
 
-    public SingleModule(FileConfiguration configuration, JavaPlugin plugin) {
-        this.configuration = configuration;
-        this.path = plugin.getDataFolder() + "/" + "spawners.yml";
-        this.plugin = plugin;
-    }
+  public SingleModule(FileConfiguration configuration, JavaPlugin plugin) {
+    this.configuration = configuration;
+    this.path = plugin.getDataFolder() + "/" + "spawners.yml";
+    this.plugin = plugin;
+  }
 
-    @Singleton
-    @Provides
-    StackerConfiguration providesStackerConfiguration() {
-        return new StackerConfiguration(configuration);
-    }
+  @Singleton
+  @Provides
+  StackerConfiguration providesStackerConfiguration() {
+    return new StackerConfiguration(configuration);
+  }
 
-    @Singleton
-    @Provides
-    StackLocation providesStackLocation(StackerConfiguration stacker) {
-        if (configuration.getBoolean("database.enabled", false)) {
-            return new StackSql(new MySQL(stacker));
-        } else {
-            return new StackYaml(new CustomYamlFile(path));
-        }
+  @Singleton
+  @Provides
+  StackLocation providesStackLocation(StackerConfiguration stacker) {
+    if (configuration.getBoolean("database.enable", false)) {
+      return new StackSql(new MySQL(stacker));
+    } else {
+      return new StackYaml(new CustomYamlFile(path));
     }
+  }
 
-    @Singleton
-    @Provides
-    CreatureListener providesCreatureListener(StackLocation location, StackerConfiguration configuration) {
-        return new CreatureListener(location, configuration, plugin);
+  @Singleton
+  @Provides
+  CreatureListener providesCreatureListener(StackLocation location, StackerConfiguration configuration) {
+    return new CreatureListener(location, configuration, plugin);
+  }
+
+  @Singleton
+  @Provides
+  SpawnStackProvider providesSpawnStackProvider() {
+    if (configuration.getBoolean("hooks.silkspawner", false)) {
+      return new SilkSpawnerHook();
+    } else {
+      return new DefaultSpawnStackProvider();
     }
+  }
 
 }

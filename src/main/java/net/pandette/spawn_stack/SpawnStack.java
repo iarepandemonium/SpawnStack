@@ -24,28 +24,40 @@ package net.pandette.spawn_stack;
 import net.pandette.spawn_stack.di.DaggerSingleComponent;
 import net.pandette.spawn_stack.di.SingleComponent;
 import net.pandette.spawn_stack.di.SingleModule;
+
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import lombok.Getter;
+
 public class SpawnStack extends JavaPlugin {
 
-    @Override
-    public void onEnable() {
-        if (!getDataFolder().exists()) {
-            saveDefaultConfig();
-        }
+  @Getter
+  private StackLocation stackLocation;
 
-        SingleComponent component = DaggerSingleComponent.builder()
-                .singleModule(new SingleModule(getConfig(), this)).build();
+  @Getter
+  private SpawnStackProvider spawnStackProvider;
 
-        Bukkit.getPluginManager().registerEvents(component.creatureListener(), this);
-        Bukkit.getPluginManager().registerEvents(component.spawnerListener(), this);
-        Bukkit.getPluginManager().registerEvents(component.soulListener(), this);
+  @Override
+  public void onEnable() {
+    if (!getDataFolder().exists()) {
+      saveDefaultConfig();
     }
 
-    @Override
-    public void onDisable() {
+    SingleComponent component = DaggerSingleComponent.builder()
+            .singleModule(new SingleModule(getConfig(), this)).build();
 
-    }
+    Bukkit.getPluginManager().registerEvents(component.creatureListener(), this);
+    Bukkit.getPluginManager().registerEvents(component.spawnerListener(), this);
+    Bukkit.getPluginManager().registerEvents(component.soulListener(), this);
+
+    stackLocation = component.stackLocation();
+    spawnStackProvider = component.spawnStackProvider();
+  }
+
+  @Override
+  public void onDisable() {
+
+  }
 
 }

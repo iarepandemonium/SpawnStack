@@ -20,6 +20,6 @@
 name: ${name}
 version: ${version}
 description: ${desc}
-depend: []
+softdepend: [SilkSpawners]
 main: net.pandette.spawn_stack.SpawnStack
 commands:

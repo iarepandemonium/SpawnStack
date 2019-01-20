@@ -18,21 +18,27 @@
  * To request information, make an issue on the github page for this
  * plugin.
  */
+package net.pandette.spawn_stack;
 
-package net.pandette.spawn_stack.util;
-
+import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
+import org.bukkit.inventory.ItemStack;
 
-public class VersionUtil {
+public interface SpawnStackProvider {
 
   /**
-   * This is used to convert creature type to entity type using a method that is still available in
-   * 12.2, mostly because I was too lazy to recompile a 1.8 version of spigot.
+   * <p>Gets the type of the Entity from an item stack</p>
    *
-   * @param type Type to convert
-   * @return Entity Type
+   * @param stack Stack to retrieve
+   * @return Stack
    */
-  public static EntityType convertCreatureType(String type) {
-    return EntityType.valueOf(type.toUpperCase());
-  }
+  EntityType getType(ItemStack stack);
+
+  /**
+   * <p>Gets the item stack for a specific location</p>
+   *
+   * @param location location
+   * @return ItemStack
+   */
+  ItemStack getStack(Location location);
 }
